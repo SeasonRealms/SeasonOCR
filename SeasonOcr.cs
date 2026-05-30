@@ -181,7 +181,7 @@ public static partial class SeasonOcr
         InferenceSession detectorSession,
         InferenceSession recognizerSession,
         ImageResult imageResult,
-        bool enableWordBeamSearch = false,
+        bool enableWordBeamSearch = true,
         bool allowRotatedRecognition = false,
         bool createAnnotatedImage = false,
         int beamWidth = 5,
