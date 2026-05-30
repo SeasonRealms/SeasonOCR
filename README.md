@@ -119,6 +119,23 @@ Parameter behavior:
 - `beamWidth`: beam width used by beam search
 - `dictionary`: optional in-memory dictionary content; when omitted, embedded model dictionaries are used if present
 
+Multilingual support
+
+"en",    "recognizer_en.onnx",     "English"
+"latin", "recognizer_latin.onnx",  "Latina"
+"zh-CN", "recognizer_ch_sim.onnx", "中文简体"
+"zh-TW", "recognizer_ch_tra.onnx", "中文繁體"
+"ja",    "recognizer_ja.onnx",     "日本語"
+"ko",    "recognizer_ko.onnx",     "한국어"
+"th",    "recognizer_th.onnx",     "ไทย"
+"ta",    "recognizer_ta.onnx",     "தமிழ்"
+"te",    "recognizer_te.onnx",     "తెలుగు"
+"kn",    "recognizer_kn.onnx",     "ಕನ್ನಡ"
+"ar",    "recognizer_ar.onnx",     "العربية"
+"ru",    "recognizer_ru.onnx",     "Русский"
+"hi",    "recognizer_hi.onnx",     "हिन्दी"
+"bn",    "recognizer_bn.onnx",     "বাংলা"
+
 ## Debug Output
 
 Enable debug output before calling the OCR API:
