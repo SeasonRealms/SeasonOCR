@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0.
 // SeasonOCR for EasyOCR Models
 
-namespace SeasonOCR;
+namespace Season.OCR;
 
 /// <summary>
 /// Represents a single recognized text region.

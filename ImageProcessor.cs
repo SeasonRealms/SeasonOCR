@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0.
 // SeasonOCR for EasyOCR Models
 
-namespace SeasonOCR;
+namespace Season.OCR;
 
 /// <summary>
 /// Shared image preprocessing helpers for AI models.
@@ -12,41 +12,68 @@ namespace SeasonOCR;
 internal static class ImageProcessor
 {
     /// <summary>
-    /// Extracts an RGB byte array from an <see cref="ImageResult"/>.
-    /// Uses the raw buffer length to distinguish RGB and RGBA input instead of relying
-    /// on <see cref="ImageResult.SourceComp"/>, which may not always match the actual data.
+    /// Extracts an RGB byte array from a raw RGB/RGBA pixel buffer.
     /// </summary>
-    public static byte[] ExtractRgb(ImageResult image)
+    public static byte[] ExtractRgb(ReadOnlySpan<byte> imageData, int width, int height)
     {
-        int pixelCount = image.Width * image.Height;
+        ValidateImageDimensions(width, height);
 
-        // Infer the actual pixel format from the byte length.
-        if (image.Data.Length == pixelCount * 3)
+        int pixelCount = width * height;
+
+        if (imageData.Length == pixelCount * 3)
+            return imageData.ToArray();
+
+        if (imageData.Length != pixelCount * 4)
         {
-            // Already RGB, so return a copy.
-            var rgb = new byte[image.Data.Length];
-            Array.Copy(image.Data, rgb, image.Data.Length);
-            return rgb;
+            throw new ArgumentException(
+                $"Unsupported image buffer length: {imageData.Length}, pixel count: {pixelCount}, expected {pixelCount * 3} (RGB) or {pixelCount * 4} (RGBA).",
+                nameof(imageData));
         }
 
-        if (image.Data.Length == pixelCount * 4)
+        var result = new byte[pixelCount * 3];
+        for (int i = 0; i < pixelCount; i++)
         {
-            // Convert RGBA to RGB by dropping the alpha channel.
-            var result = new byte[pixelCount * 3];
-            for (int i = 0; i < pixelCount; i++)
-            {
-                int src = i * 4;
-                int dst = i * 3;
-                result[dst] = image.Data[src];         // R
-                result[dst + 1] = image.Data[src + 1]; // G
-                result[dst + 2] = image.Data[src + 2]; // B
-            }
-            return result;
+            int src = i * 4;
+            int dst = i * 3;
+            result[dst] = imageData[src];
+            result[dst + 1] = imageData[src + 1];
+            result[dst + 2] = imageData[src + 2];
         }
 
-        throw new NotSupportedException(
-            $"Unsupported image buffer length: {image.Data.Length}, pixel count: {pixelCount}, " +
-            $"expected {pixelCount * 3} (RGB) or {pixelCount * 4} (RGBA).");
+        return result;
+    }
+
+    /// <summary>
+    /// Converts a raw RGB/RGBA image buffer to RGBA.
+    /// </summary>
+    public static byte[] EnsureRgba(ReadOnlySpan<byte> imageData, int width, int height)
+    {
+        ValidateImageDimensions(width, height);
+
+        int pixelCount = width * height;
+
+        if (imageData.Length == pixelCount * 4)
+            return imageData.ToArray();
+
+        if (imageData.Length != pixelCount * 3)
+        {
+            throw new ArgumentException(
+                $"Unsupported image buffer length: {imageData.Length}, pixel count: {pixelCount}, expected {pixelCount * 3} (RGB) or {pixelCount * 4} (RGBA).",
+                nameof(imageData));
+        }
+
+        var rgba = new byte[pixelCount * 4];
+        for (int i = 0; i < pixelCount; i++)
+        {
+            int src = i * 3;
+            int dst = i * 4;
+            rgba[dst] = imageData[src];
+            rgba[dst + 1] = imageData[src + 1];
+            rgba[dst + 2] = imageData[src + 2];
+            rgba[dst + 3] = 255;
+        }
+
+        return rgba;
     }
 
     /// <summary>
@@ -342,5 +369,14 @@ internal static class ImageProcessor
         }
 
         return result;
+    }
+
+    private static void ValidateImageDimensions(int width, int height)
+    {
+        if (width <= 0)
+            throw new ArgumentOutOfRangeException(nameof(width), "Image width must be positive.");
+
+        if (height <= 0)
+            throw new ArgumentOutOfRangeException(nameof(height), "Image height must be positive.");
     }
 }

@@ -173,6 +173,14 @@ Recommended model sources:
 - Download ready-made ONNX models from [Hugging Face](https://huggingface.co/SeasonEngine/SeasonOCR)
 - Or generate them yourself from the repository workflow: [export-easyocr-onnx.yml](https://github.com/SeasonRealms/SeasonOCR/actions/workflows/export-easyocr-onnx.yml)
 
+Reference models used by the current OCR pipeline:
+
+| Local File Name | Upstream Project | Official Weights Page | License | Notes |
+|---|---|---|---|---|
+| `Craft_mlt_25k.onnx` | EasyOCR / CRAFT | [EasyOCR Model Hub](https://www.jaided.ai/easyocr/modelhub/) | `MIT` | Detector model exported from the EasyOCR CRAFT pipeline. The original CRAFT upstream repository is MIT licensed. |
+| `Recognizer_en.onnx` | EasyOCR | [EasyOCR Model Hub](https://www.jaided.ai/easyocr/modelhub/) | `Apache-2.0` | Local ONNX name likely corresponds to the upstream `english_g2` recognizer. |
+| `Recognizer_ch_sim.onnx` | EasyOCR | [EasyOCR Model Hub](https://www.jaided.ai/easyocr/modelhub/) | `Apache-2.0` | Local ONNX name likely corresponds to the upstream `zh_sim_g2` recognizer. |
+
 Recognizer metadata support:
 
 - `SeasonOCR` reads embedded recognizer charset metadata when available
